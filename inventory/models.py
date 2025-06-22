@@ -1,7 +1,8 @@
 from django.db import models
 
 class Item(models.Model):
-    name = models.CharField(max_length=100)
+    id = models.AutoField(primary_key=True)  # INT AUTO_INCREMENT PRIMARY KEY
+    name = models.CharField(max_length=100)  # VARCHAR(100)
 
     def __str__(self):
-        return self.name
+        return f"{self.id} - {self.name}"
