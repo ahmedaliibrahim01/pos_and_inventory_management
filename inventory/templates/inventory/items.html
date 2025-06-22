@@ -1,0 +1,62 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Items{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Items</h2>
+  <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemModal">
+    New
+  </button>
+</div>
+
+<div class="card">
+  <div class="card-header bg-primary text-white">
+    <!-- Sadece mavi bar -->
+  </div>
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col" style="width: 60px;">No</th>
+          <th scope="col">Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Example Item</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Another Item</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemModalLabel">Item Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="item-name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="item-name" name="name" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
