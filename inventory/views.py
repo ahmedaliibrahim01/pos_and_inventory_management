@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from .models import Item
 from .forms import ItemForm
 
@@ -16,7 +17,12 @@ def item_list(request):
         form = ItemForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Item added successfully.")
             return redirect('items')
+        else:
+            for field in form:
+                for error in field.errors:
+                    messages.error(request, f"{field.label}: {error}")
     else:
         form = ItemForm()
 
@@ -27,5 +33,16 @@ def update_item(request, item_id):
     item = get_object_or_404(Item, id=item_id)
     if request.method == 'POST':
         item.name = request.POST.get('name')
-        item.save()
+        try:
+            item.save()
+            messages.success(request, "Item updated successfully.")
+        except:
+            messages.error(request, "Another item with this name already exists.")
+    return redirect('items')
+
+def delete_item(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    if request.method == 'POST':
+        item.delete()
+        messages.success(request, "Item deleted successfully.")
     return redirect('items')
