@@ -11,41 +11,73 @@
 </div>
 
 <div class="card">
-  <div class="card-header bg-primary text-white">
-    <!-- Sadece mavi bar -->
-  </div>
+  <div class="card-header bg-primary text-white"></div>
   <div class="card-body">
     <table class="table table-bordered">
       <thead>
         <tr>
           <th scope="col" style="width: 60px;">No</th>
           <th scope="col">Name</th>
+          <th scope="col" style="width: 120px;">Actions</th>
         </tr>
       </thead>
       <tbody>
+        {% for item in items %}
         <tr>
-          <td>1</td>
-          <td>Example Item</td>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ item.name }}</td>
+          <td>
+            <!-- 🟡 Güncelle butonu -->
+            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#updateModal{{ item.id }}">
+              Update
+            </button>
+
+            <!-- 🔵 Güncelleme modalı -->
+            <div class="modal fade" id="updateModal{{ item.id }}" tabindex="-1" aria-labelledby="updateModalLabel{{ item.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <form method="post" action="{% url 'update_item' item.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="updateModalLabel{{ item.id }}">Update Item</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <label for="name{{ item.id }}" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" id="name{{ item.id }}" value="{{ item.name }}" required>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-success">Update</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </td>
         </tr>
+        {% empty %}
         <tr>
-          <td>2</td>
-          <td>Another Item</td>
+          <td colspan="3">No items available.</td>
         </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- ➕ Yeni item ekleme modalı -->
 <div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="itemModalLabel">Item Information</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
       <form method="post">
         {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="itemModalLabel">Item Information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
         <div class="modal-body">
           <div class="mb-3">
             <label for="item-name" class="form-label">Name</label>
