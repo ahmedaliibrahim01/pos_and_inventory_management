@@ -8,4 +8,7 @@ urlpatterns = [
     path('pos/', views.pos, name='pos'),
     path('items/update/<int:item_id>/', views.update_item, name='update_item'),
     path('items/delete/<int:item_id>/', views.delete_item, name='delete_item'),
+
+    # ✅ AJAX destekli arama için eklendi
+    path('stock/search/', views.stock_search, name='stock_search'),
 ]

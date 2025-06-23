@@ -11,7 +11,7 @@
 
 <!-- Arama kutusu -->
 <form method="GET" class="mb-3">
-  <input type="text" name="q" class="form-control" placeholder="Search stock..." value="{{ request.GET.q }}">
+  <input type="text" name="q" id="stock-search" class="form-control" placeholder="Search stock..." autocomplete="off">
 </form>
 
 <!-- Flash messages -->
@@ -77,22 +77,20 @@
       <th>Description</th>
     </tr>
   </thead>
-  <tbody>
-    {% for stock in stocks %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      <td>{{ stock.item.name }}</td>
-      <td>{{ stock.quantity }}</td>
-      <td>{{ stock.price }}</td>
-      <td>{{ stock.wholeseller_price }}</td>
-      <td>{{ stock.retailer_price }}</td>
-      <td>{{ stock.description }}</td>
-    </tr>
-    {% empty %}
-    <tr>
-      <td colspan="7">No stock data available.</td>
-    </tr>
-    {% endfor %}
+  <tbody id="stock-table-body">
+    {% include 'inventory/_stock_table.html' %}
   </tbody>
 </table>
+
+<!-- AJAX Search Script -->
+<script>
+  document.getElementById('stock-search').addEventListener('keyup', function () {
+    const query = this.value;
+    fetch(`/stock/search/?q=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('stock-table-body').innerHTML = data.html;
+      });
+  });
+</script>
 {% endblock %}

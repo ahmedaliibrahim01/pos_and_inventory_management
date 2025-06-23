@@ -79,3 +79,32 @@ def stock(request):
         'form': form,
         'stocks': stocks,
     })
+
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+
+def stock_search(request):
+    query = request.GET.get('q', '')
+    if query:
+        stocks = Stock.objects.select_related('item').filter(
+            Q(item__name__icontains=query) |
+            Q(description__icontains=query)
+        )
+    else:
+        stocks = Stock.objects.select_related('item').all()
+
+    html = render_to_string('inventory/_stock_table.html', {'stocks': stocks})
+    return JsonResponse({'html': html})
+
+from django.template.loader import render_to_string
+from django.http import JsonResponse
+
+def stock_search(request):
+    query = request.GET.get('q', '')
+    stocks = Stock.objects.select_related('item').filter(
+        Q(item__name__icontains=query) |
+        Q(description__icontains=query)
+    ) if query else Stock.objects.select_related('item').all()
+
+    html = render_to_string('inventory/_stock_table.html', {'stocks': stocks})
+    return JsonResponse({'html': html})
