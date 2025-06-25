@@ -1,0 +1,99 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}New Stock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h2>New Stock</h2>
+    <!-- New Button triggers modal -->
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#stockModal">New</button>
+</div>
+
+<!-- Arama kutusu -->
+<form class="mb-3">
+  <input type="text"
+         id="stock-search"
+         class="form-control"
+         placeholder="Search new stock..."
+         autocomplete="off">
+</form>
+
+<!-- Flash messages -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<!-- Modal (tasarım korunur; veritabanına ya da Sheets’e yazma mantığı daha sonra eklenecek) -->
+<div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="stockModalLabel">Add New Stock</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form alanları (istersen kaldırılabilir) -->
+          <div class="row mb-2">
+            <div class="col-md-4">{{ form.item.label_tag }} {{ form.item }}</div>
+            <div class="col-md-2">{{ form.quantity.label_tag }} {{ form.quantity }}</div>
+            <div class="col-md-2">{{ form.price.label_tag }} {{ form.price }}</div>
+            <div class="col-md-2">{{ form.wholeseller_price.label_tag }} {{ form.wholeseller_price }}</div>
+            <div class="col-md-2">{{ form.retailer_price.label_tag }} {{ form.retailer_price }}</div>
+          </div>
+          <div class="mb-2">{{ form.description.label_tag }} {{ form.description }}</div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Save Stock</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Google Sheets verisiyle tablo -->
+<table class="table table-bordered mt-3">
+  <thead class="table-primary">
+    <tr>
+      <th>No</th>
+      <th>Item</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Wholeseller</th>
+      <th>Retailer</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody id="stock-table-body">
+    {% if data %}
+      {% for row in data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ row.Item }}</td>
+          <td>{{ row.Quantity }}</td>
+          <td>{{ row.Price }}</td>
+          <td>{{ row.Wholeseller }}</td>
+          <td>{{ row.Retailer }}</td>
+          <td>{{ row.Description }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      <tr><td colspan="7" class="text-center">No data found.</td></tr>
+    {% endif %}
+  </tbody>
+</table>
+
+<!-- İstemci-tarafı arama -->
+<script>
+document.getElementById('stock-search').addEventListener('keyup', function () {
+  const query = this.value.toLowerCase();
+  document.querySelectorAll('#stock-table-body tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(query) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}
